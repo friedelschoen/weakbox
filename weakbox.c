@@ -32,10 +32,11 @@
 		(mapping).target = source_;                                                  \
 	}
 
+#define MYSELF              "weakbox"
 #define PATH_PROC_UIDMAP    "/proc/self/uid_map"
 #define PATH_PROC_GIDMAP    "/proc/self/gid_map"
 #define PATH_PROC_SETGROUPS "/proc/self/setgroups"
-#define SHELL_DEFAULT       "bash"
+#define SHELL_DEFAULT       "/bin/bash"
 #define MAX_BINDS           64
 #define MAX_USERMAP         8
 #define MAX_GROUPMAP        16
@@ -96,69 +97,71 @@ static int remove_bind(const char* path) {
 }
 
 int main(int argc, char** argv) {
-	const char* root  = getenv("WEAKBOX");
-	const char* shell = getenv("SHELL");
-	int         flagr = 0, flagv = 0;
+	const char* root     = getenv("WEAKBOX");
+	const char* shell    = getenv("SHELL");
+	int         linkexec = 0, flagr = 0, flagv = 0;
 	char        pwd[PATH_MAX];
 	char*       temp;
 	char*       argf;
 
 	(void) argc;
-
 	getcwd(pwd, sizeof(pwd));
 
-	argv0 = *argv;
-	ARGBEGIN
-	switch (OPT) {
-		case 'h':
-			usage(0);
-		case 'v':
-			flagv++;
-			break;
-		case 's':
-			flagr++;
-			break;
-		case 'r':
-			root = EARGF(usage(1));
-			break;
-		case 'b':
-			argf = EARGF(usage(1));
-			if (bind_count >= (int) LEN(bind)) {
-				printf("error: too many bindings\n");
-				return 1;
-			}
-			SET_MAPPING_WITH_DEMILITER(bind[bind_count], argf, temp, ':', argf, temp);
-			bind_count++;
-			break;
-		case 'u':
-			argf = EARGF(usage(1));
-			if (usermap_count >= (int) LEN(usermap)) {
-				printf("error: too many user-mappings\n");
-				return 1;
-			}
+	argv0    = *argv;
+	linkexec = strcmp(argv0, MYSELF);
+	if (!linkexec) {
+		ARGBEGIN
+		switch (OPT) {
+			case 'h':
+				usage(0);
+			case 'v':
+				flagv++;
+				break;
+			case 's':
+				flagr++;
+				break;
+			case 'r':
+				root = EARGF(usage(1));
+				break;
+			case 'b':
+				argf = EARGF(usage(1));
+				if (bind_count >= (int) LEN(bind)) {
+					printf("error: too many bindings\n");
+					return 1;
+				}
+				SET_MAPPING_WITH_DEMILITER(bind[bind_count], argf, temp, ':', argf, temp);
+				bind_count++;
+				break;
+			case 'u':
+				argf = EARGF(usage(1));
+				if (usermap_count >= (int) LEN(usermap)) {
+					printf("error: too many user-mappings\n");
+					return 1;
+				}
 
-			SET_MAPPING_WITH_DEMILITER(usermap[usermap_count], argf, temp, ':', atoi(argf), atoi(temp));
-			usermap_count++;
-			break;
-		case 'g':
-			argf = EARGF(usage(1));
-			if (groupmap_count >= (int) LEN(groupmap)) {
-				printf("error: too many group-mappings\n");
-				return 1;
-			}
-			SET_MAPPING_WITH_DEMILITER(groupmap[groupmap_count], argf, temp, ':', atoi(argf), atoi(temp));
-			groupmap_count++;
-			break;
-		case 'B':
-			argf = EARGF(usage(1));
-			if (!remove_bind(argf))
-				printf("warn: binding '%s' not found\n", argf);
-			break;
-		default:
-			printf("error: unknown option '-%c'\n", OPT);
-			usage(1);
+				SET_MAPPING_WITH_DEMILITER(usermap[usermap_count], argf, temp, ':', atoi(argf), atoi(temp));
+				usermap_count++;
+				break;
+			case 'g':
+				argf = EARGF(usage(1));
+				if (groupmap_count >= (int) LEN(groupmap)) {
+					printf("error: too many group-mappings\n");
+					return 1;
+				}
+				SET_MAPPING_WITH_DEMILITER(groupmap[groupmap_count], argf, temp, ':', atoi(argf), atoi(temp));
+				groupmap_count++;
+				break;
+			case 'B':
+				argf = EARGF(usage(1));
+				if (!remove_bind(argf))
+					printf("warn: binding '%s' not found\n", argf);
+				break;
+			default:
+				printf("error: unknown option '-%c'\n", OPT);
+				usage(1);
+		}
+		ARGEND
 	}
-	ARGEND
 
 	usermap[usermap_count].source     = flagr ? geteuid() : 0;
 	usermap[usermap_count++].target   = geteuid();
@@ -221,7 +224,12 @@ int main(int argc, char** argv) {
 		(void) chdir("/");
 	}
 
-	if (*argv) {
+	if (linkexec) {
+		// argv is never shifted
+		DEBUG("debug: executing '%s'...\n", argv0);
+		execvp(argv0, argv);
+		fprintf(stderr, "error: unable to execute '%s': %s\n", *argv, strerror(errno));
+	} else if (*argv) {
 		DEBUG("debug: executing '%s'...\n", *argv);
 		execvp(*argv, argv);
 		fprintf(stderr, "error: unable to execute '%s': %s\n", *argv, strerror(errno));
