@@ -1,0 +1,101 @@
+.TH WEAKBOX 1 "April 2024" "Version 0.1.0" "User Manuals"
+
+.SH NAME
+weakbox \- create a weak container for running programs from a different Linux distribution
+
+.SH SYNOPSIS
+.B weakbox
+[\-hs] [\fI\-r\fP path] [\fI\-b\fP source[:target]] [\fI\-B\fP source] [\fI\-u\fP uid[:uid]] [\fI\-g\fP gid[:gid]] command ...
+
+.SH DESCRIPTION
+\fBweakbox\fR is a tool for Linux that allows you to create a container environment suitable for running programs from a different Linux distribution, particularly useful for executing glibc-based programs (mostly closed-source software) under systems that are musl-based. The container created by \fBweakbox\fR is not secured and should not be considered as a secure isolation mechanism.
+
+.SH OPTIONS
+.TP
+\fB\-h\fP
+Display usage information and exit.
+.TP
+\fB\-s\fP
+Run the specified command within the container as \fIroot\fR.
+.TP
+\fB\-v\fP
+Enable verbose mode for debugging purposes.
+.TP
+\fB\-r\fP path
+Use a different root path of the container than \fBGLIBC_ROOT\fR. \fIpath\fR is relative to \fIcontainer-root\fR.
+.TP
+\fB\-b\fP source[:target]
+Bind mount the specified source directory to the target directory within the container. If \fItarget\fR is not provided, it defaults to the same as \fIsource\fR.
+.TP
+\fB\-B\fP source
+Remove the specified bind mount from the \fIdefault bindings\fR.
+.TP
+\fB\-u\fP uid[:uid]
+Map user IDs inside the container. If only one \fIuid\fR is provided, it will be mapped to the same ID inside the container.
+.TP
+\fB\-g\fP gid[:gid]
+Map group IDs inside the container. If only one \fIgid\fR is provided, it will be mapped to the same ID inside the container.
+
+.SH EXAMPLES
+.TP
+1. Run a program within the container:
+.B weakbox -s /path/to/program
+.TP
+2. Create a container with a custom root path and bind mount directories:
+.B weakbox -r /custom/root -b /host/dir:/dir /path/to/program
+.TP
+3. Map user and group IDs inside the container:
+.B weakbox -u 1000:1000 -g 1000:1000 /path/to/program
+
+.SH ENVIRONMENT VARIABLES
+\fBGLIBC_ROOT\fR
+Set the root path of the container if not provided via the \fI\-r\fR option.
+
+.SH DEFAULT MOUNTS
+.TP
+\fI/dev\fR
+directory containing all devices
+.TP
+\fI/home\fR
+home directories of users
+.TP
+\fI/proc\fR
+directories containing information about processes
+.TP
+\fI/sys\fR
+system directories for various devices
+.TP
+\fI/tmp\fR
+temporary directory
+.TP
+\fI/run\fR
+temporary directory for daemons and long-running programs
+.TP
+\fI/etc/resolv.conf\fR
+nameserver-resolution configuration
+.TP
+\fI/etc/passwd\fR
+file containing information about users
+.TP
+\fI/etc/group\fR
+file containing information about groups
+
+.SH EXIT STATUS
+.TP
+0
+Successful execution.
+.TP
+1
+An error occurred during execution.
+
+.SH SEE ALSO
+For more information, refer to the \fBweakbox\fR source code or documentation.
+
+.SH AUTHOR
+\fBweakbox\fR was written by Friedel Schon.
+
+.SH REPORTING BUGS
+Report bugs to the GitHub repository for \fBweakbox\fR.
+
+.SH COPYRIGHT
+\fBweakbox\fR is licensed under the zlib-license.
