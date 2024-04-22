@@ -37,9 +37,20 @@ weakbox [options] command ...
 - `-v`: Enable verbose mode for debugging purposes.
 - `-r path`: Set the root path of the container to `path`.
 - `-b source[:target]`: Bind mount the specified source directory to the target directory within the container. Target is relative to `root`.
-- `-B source`: Remove the specified bind mount from the container.
+- `-B source`: Remove a default bind mount from the container.
 - `-u uid[:uid]`: Map user IDs inside the container.
 - `-g gid[:gid]`: Map group IDs inside the container.
+
+### Default Mounts
+- `/dev`: directory containing all devices
+- `/home`: home directories of users
+- `/proc`: directories containing information about processes
+- `/sys`: system directories for various devices
+- `/tmp`: temporary directory
+- `/run`: temporary directory for daemons and long-running programs
+- `/etc/resolv.conf`: nameserver-resolution configuration
+- `/etc/passwd`: file containing information about users
+- `/etc/group`: file containing information about groups
 
 ### Examples
 
