@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
 	ARGEND
 
 	usermap[usermap_count].source     = flagr ? geteuid() : 0;
-	usermap[usermap_count++].target   = getegid();
+	usermap[usermap_count++].target   = geteuid();
 	groupmap[groupmap_count].source   = flagr ? getegid() : 0;
 	groupmap[groupmap_count++].target = getegid();
 
@@ -184,7 +184,7 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; i < usermap_count; i++) {
 		DEBUG("debug: mapping user %d to %d\n", usermap[i].source, usermap[i].target);
-		if (open_printf(PATH_PROC_UIDMAP, "%u %u 1", usermap[i].target, usermap[i].source)) {
+		if (open_printf(PATH_PROC_UIDMAP, "%u %u 1", usermap[i].source, usermap[i].target)) {
 			fprintf(stderr, "error: unable to map user %d to %d: %s\n", usermap[i].source, usermap[i].target, strerror(errno));
 			return 1;
 		}
@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
 
 	for (int i = 0; i < groupmap_count; i++) {
 		DEBUG("debug: mapping group %d to %d\n", groupmap[i].source, groupmap[i].target);
-		if (open_printf(PATH_PROC_UIDMAP, "%u %u 1", groupmap[i].target, groupmap[i].source)) {
+		if (open_printf(PATH_PROC_GIDMAP, "%u %u 1", groupmap[i].source, groupmap[i].target)) {
 			fprintf(stderr, "error: unable to map group %d to %d: %s\n", groupmap[i].source, groupmap[i].target, strerror(errno));
 			return 1;
 		}
