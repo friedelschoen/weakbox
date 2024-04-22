@@ -228,11 +228,8 @@ int main(int argc, char** argv) {
 	} else if (shell) {
 		DEBUG("debug: executing '%s'...\n", shell);
 		execlp(shell, shell, NULL);
-		fprintf(stderr, "error: unable to execute '%s': %s\n", shell, strerror(errno));
-	} else {
-		DEBUG("debug: executing '" SHELL_DEFAULT "'...\n");
 		execlp(SHELL_DEFAULT, SHELL_DEFAULT, NULL);
-		fprintf(stderr, "error: unable to execute '" SHELL_DEFAULT "': %s\n", strerror(errno));
+		fprintf(stderr, "error: unable to execute '%s' or '" SHELL_DEFAULT "': %s\n", shell, strerror(errno));
 	}
 	return 1;
 }
