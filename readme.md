@@ -30,6 +30,8 @@ Run **weakbox** with the desired options and command to execute within the conta
 weakbox [options] command ...
 ```
 
+By default `command` is executed, if command is omitted current shell or `/bin/sh` is executed.
+
 ### Options
 
 - `-h`: Display usage information.

@@ -5,10 +5,11 @@ weakbox \- create a weak container for running programs from a different Linux d
 
 .SH SYNOPSIS
 .B weakbox
-[\-hs] [\fI\-r\fP path] [\fI\-b\fP source[:target]] [\fI\-B\fP source] [\fI\-u\fP uid[:uid]] [\fI\-g\fP gid[:gid]] command ...
+[\-hs] [\fI\-r\fP path] [\fI\-b\fP source[:target]] [\fI\-B\fP source] [\fI\-u\fP uid[:uid]] [\fI\-g\fP gid[:gid]] [command] ...
 
 .SH DESCRIPTION
 \fBweakbox\fR is a tool for Linux that allows you to create a container environment suitable for running programs from a different Linux distribution, particularly useful for executing glibc-based programs (mostly closed-source software) under systems that are musl-based. The container created by \fBweakbox\fR is not secured and should not be considered as a secure isolation mechanism.
+By default \fBcommand\fR is executed, if command is omitted current shell or \fI/bin/sh\fR is executed.
 
 .SH OPTIONS
 .TP
