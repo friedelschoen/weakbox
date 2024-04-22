@@ -37,7 +37,7 @@ By default `command` is executed, if command is omitted current shell or `/bin/s
 - `-h`: Display usage information.
 - `-s`: Run the specified command within the container as root.
 - `-v`: Enable verbose mode for debugging purposes.
-- `-r path`: Set the root path of the container to `path`.
+- `-r path`: Set the root path of the container to `path`. By default the container lays at `$WEAKBOX`.
 - `-b source[:target]`: Bind mount the specified source directory to the target directory within the container. Target is relative to `root`.
 - `-B source`: Remove a default bind mount from the container.
 - `-u uid[:uid]`: Map user IDs inside the container.

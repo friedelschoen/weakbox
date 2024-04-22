@@ -96,7 +96,7 @@ static int remove_bind(const char* path) {
 }
 
 int main(int argc, char** argv) {
-	const char* root  = getenv("GLIBC_ROOT");
+	const char* root  = getenv("WEAKBOX");
 	const char* shell = getenv("SHELL");
 	int         flagr = 0, flagv = 0;
 	char        pwd[PATH_MAX];
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
 	groupmap[groupmap_count++].target = getegid();
 
 	if (!root) {
-		fprintf(stderr, "error: $GLIBC_ROOT not set and option '-r' is not used\n");
+		fprintf(stderr, "error: $WEAKBOX not set and option '-r' is not used\n");
 		return 1;
 	}
 

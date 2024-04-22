@@ -23,10 +23,10 @@ Run the specified command within the container as \fIroot\fR.
 Enable verbose mode for debugging purposes.
 .TP
 \fB\-r\fP path
-Use a different root path of the container than \fBGLIBC_ROOT\fR. \fIpath\fR is relative to \fIcontainer-root\fR.
+Use a different root path of the container than \fBWEAKBOX\fR.
 .TP
 \fB\-b\fP source[:target]
-Bind mount the specified source directory to the target directory within the container. If \fItarget\fR is not provided, it defaults to the same as \fIsource\fR.
+Bind mount the specified source directory to the target directory within the container. If \fItarget\fR is not provided, it defaults to the same as \fIsource\fR. \fItarget\fR  is relative to container-root.
 .TP
 \fB\-B\fP source
 Remove the specified bind mount from the \fIdefault bindings\fR.
@@ -49,7 +49,7 @@ Map group IDs inside the container. If only one \fIgid\fR is provided, it will b
 .B weakbox -u 1000:1000 -g 1000:1000 /path/to/program
 
 .SH ENVIRONMENT VARIABLES
-\fBGLIBC_ROOT\fR
+\fBWEAKBOX\fR
 Set the root path of the container if not provided via the \fI\-r\fR option.
 
 .SH DEFAULT MOUNTS
